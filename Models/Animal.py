@@ -33,7 +33,7 @@ class Animal:
         #     self.gravity = -1 * self.gravity
         #     threading.Thread(target=self._fall_thread).start()
 
-    def vertical_collision(self):
+    def collision(self):
         self.can_invert = True
 
     def fall(self):

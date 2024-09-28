@@ -35,15 +35,16 @@ if __name__ == '__main__':
                 if event.key == pygame.K_UP:
                     chick.invert_gravity()
 
-        #Setting foregorund
-        map_surface.refreshForeground()
-        chick.move()
-        map_surface.setChick(chick)
-
-        #Handling functionality
-        if not map_surface.check_for_collisions(chick):
+        # Handling functionality
+        vcol, hcol = map_surface.check_for_collisions(chick)
+        if not hcol:
+            chick.move()
+        if not vcol:
             chick.fall()
 
+        #Refreshing screen
+        map_surface.scroll()
+        map_surface.setChick(chick)
         pygame.display.update()
         clock.tick(30)
     pygame.quit()

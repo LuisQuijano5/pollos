@@ -16,6 +16,7 @@ class Map:
         self.size = size
         self.map_surface = pygame.Surface((self.map_width, self.map_height))
         self.map_surface.fill((100, 150, 255))
+        self.screen_rect = pygame.Rect(self.camera_x, self.camera_y, self.screen.get_width(), self.screen.get_height())
 
     def set_map_surface(self):
         for x in range(0, self.map_width, self.size):
@@ -25,24 +26,31 @@ class Map:
             ceiling_square.draw(self.map_surface)
             self.map_data.append(floor_square)
             self.map_data.append(ceiling_square)
+        floor_square = Square(800, 520, self.size, (0, 255, 0))
+        floor_square.draw(self.map_surface)
+        self.map_data.append(floor_square)
 
     def check_for_collisions(self, chick):
-        screen_rect = pygame.Rect(self.camera_x, self.camera_y, self.screen.get_width(), self.screen.get_height())
-        collision_detected = False
+        vertical_collision_detected, horizontal_collision_detected = False, False
         for sq in self.map_data:
-            if screen_rect.colliderect(sq.hitbox):
+            if self.screen_rect.colliderect(sq.hitbox):
                 if chick.hitbox.colliderect(sq.hitbox):
                     if (not chick.gravity_is_inverted and sq.hitbox.top <= chick.hitbox.bottom < sq.hitbox.bottom) or \
-                            (chick.gravity_is_inverted and sq.hitbox.bottom >= chick.hitbox.top > sq.hitbox.top):
+                       (chick.gravity_is_inverted and sq.hitbox.bottom >= chick.hitbox.top > sq.hitbox.top):
                         sq.change_color((0, 0, 0), self.map_surface)
-                        chick.vertical_collision()
-                        collision_detected = True
-                        break
-        return collision_detected
+                        chick.collision()
+                        vertical_collision_detected = True
+                    elif chick.hitbox.x + self.size >= sq.hitbox.x:
+                        sq.change_color((0, 0, 0), self.map_surface)
+                        chick.collision()
+                        horizontal_collision_detected = True
 
-    def refreshForeground(self):
+        return vertical_collision_detected, horizontal_collision_detected
+
+    def scroll(self):
         self.screen.blit(self.map_surface, (-self.camera_x, -self.camera_y))
         self.camera_x += self.scroll_speed
+        self.screen_rect = pygame.Rect(self.camera_x, self.camera_y, self.screen.get_width(), self.screen.get_height())
 
     def setChick(self, chick):
         chick.draw(self.screen, self.camera_x)
