@@ -1,10 +1,11 @@
+from platform import system
+
 import pygame
 
 from Models.Square import Square
 
 
 class Map:
-    map_data = []
 
     def __init__(self, screen, camera_x, camera_y, map_width, map_height, scroll_speed, size):
         self.screen = screen
@@ -14,46 +15,62 @@ class Map:
         self.map_width = map_width
         self.map_height = map_height
         self.size = size
-        self.map_surface = pygame.Surface((self.map_width, self.map_height))
-        self.map_surface.fill((100, 150, 255))
-        self.screen_rect = pygame.Rect(self.camera_x, self.camera_y, self.screen.get_width(), self.screen.get_height())
+        # Se duplicó el ancho de la superficie del mapa para permitir un scrolling continuo
+        self.map_surface = pygame.Surface((self.map_width * 2, self.map_height))
+        # Se movió map_data a ser un atributo de instancia
+        self.map_data = []
+        # Se añadió last_generated_x para rastrear la generación del mapa
+        self.last_generated_x = 0
+        self.set_map_surface()
 
     def set_map_surface(self):
-        for x in range(0, self.map_width, self.size):
-            floor_square = Square(x, 560, self.size, (0, 255, 0))
+        self.map_surface.fill((100, 150, 255))
+        # Llamar a generate_surface en lugar de generar directamente
+        self.generate_surface(0, self.map_width * 2)
+
+    # Metodo para generar la superficie del mapa
+    def generate_surface(self, start_x, end_x):
+        for x in range(start_x, end_x, self.size):
+            floor_square = Square(x, self.map_height - self.size, self.size, (139, 69, 19))
             ceiling_square = Square(x, 0, self.size, (255, 255, 255))
             floor_square.draw(self.map_surface)
             ceiling_square.draw(self.map_surface)
             self.map_data.append(floor_square)
             self.map_data.append(ceiling_square)
-        floor_square = Square(800, 520, self.size, (0, 255, 0))
-        floor_square.draw(self.map_surface)
-        self.map_data.append(floor_square)
+        self.last_generated_x = end_x
 
-    def check_for_collisions(self, chick):
-        vertical_collision_detected, horizontal_collision_detected = False, False
+    # Se actualizó la lógica de detección de colisiones
+    def check_for_collisions(self, animal):
+        animal_rect = animal.hitbox.copy()
+        animal_rect.x -= self.camera_x
         for sq in self.map_data:
-            if self.screen_rect.colliderect(sq.hitbox):
-                if chick.hitbox.colliderect(sq.hitbox):
-                    if (not chick.gravity_is_inverted and sq.hitbox.top <= chick.hitbox.bottom < sq.hitbox.bottom) or \
-                       (chick.gravity_is_inverted and sq.hitbox.bottom >= chick.hitbox.top > sq.hitbox.top):
-                        sq.change_color((0, 0, 0), self.map_surface)
-                        chick.collision()
-                        vertical_collision_detected = True
-                    elif chick.hitbox.x + self.size >= sq.hitbox.x:
-                        sq.change_color((0, 0, 0), self.map_surface)
-                        chick.collision()
-                        horizontal_collision_detected = True
+            if animal_rect.colliderect(sq.hitbox):
+                if animal.gravity > 0:  # Caer hacia abajo
+                    if animal_rect.bottom > sq.hitbox.top and animal_rect.top < sq.hitbox.top:
+                        animal.hitbox.bottom = sq.hitbox.top + self.camera_x
+                        return True
+                else:  # Caer hacia arriba
+                    if animal_rect.top < sq.hitbox.bottom and animal_rect.bottom > sq.hitbox.bottom:
+                        animal.hitbox.top = sq.hitbox.bottom + self.camera_x
+                        return True
+        return False
 
-        return vertical_collision_detected, horizontal_collision_detected
-
+    # Se actualizó scroll para manejar el scrolling continuo
     def scroll(self):
-        self.screen.blit(self.map_surface, (-self.camera_x, -self.camera_y))
+        draw_x = -(self.camera_x % self.map_width)
+        self.screen.blit(self.map_surface, (draw_x, -self.camera_y))
+        if draw_x > -self.screen.get_width():
+            self.screen.blit(self.map_surface, (draw_x + self.map_width, -self.camera_y))
+
+        # Generación continua del mapa
+        if self.camera_x + self.screen.get_width() > self.last_generated_x - self.size:
+            new_start = self.last_generated_x % self.map_width
+            self.generate_surface(new_start, new_start + self.map_width)
+
         self.camera_x += self.scroll_speed
-        self.screen_rect = pygame.Rect(self.camera_x, self.camera_y, self.screen.get_width(), self.screen.get_height())
 
     def setChick(self, chick):
         chick.draw(self.screen, self.camera_x)
 
-    def setSquare(self, sq):
-        sq.draw(self.screen)
+    #def setSquare(self, sq):
+    #    sq.draw(self.screen)
