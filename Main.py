@@ -22,7 +22,6 @@ if __name__ == '__main__':
     chick = Chick(400, 300, scroll_speed, square_size, (0, 0, 0),  map_height - square_size, square_size, gravity)
     map_surface.set_map_surface()
 
-    i = 0 #debugging
     #Game cycle
     run = True
     while run:
