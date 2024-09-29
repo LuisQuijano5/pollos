@@ -15,7 +15,7 @@ if __name__ == '__main__':
     camera_y = 0
     map_width = 2000
     map_height = 600
-    gravity = 0.5
+    gravity = 5
 
     #Objects creation
     map_surface = Map(screen, camera_x, camera_y, map_width, map_height, scroll_speed, square_size)
@@ -33,17 +33,20 @@ if __name__ == '__main__':
                 if event.key == pygame.K_UP:
                     chick.invert_gravity()
 
-        # Handling functionality
-        #vcol, hcol = map_surface.check_for_collisions(chick)
-        #if not hcol:
-        #    chick.move()
-        #if not vcol:
-        #    chick.fall()
-
         map_surface.scroll()
-        chick.update(map_surface)
+
+        # Handling functionality
+        vcol, hcol = map_surface.check_for_collisions(chick)
+        print(vcol, hcol)
+
+        if not hcol:
+            chick.move()
+        if not vcol:
+            chick.fall()
+
         map_surface.setChick(chick)
 
         pygame.display.flip()
         clock.tick(60)
-    pygame.quit()
+
+pygame.quit()

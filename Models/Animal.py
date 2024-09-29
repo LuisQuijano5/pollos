@@ -66,10 +66,3 @@ class Animal:
         #         self.is_falling = False
         #         break
         #     pygame.time.delay(20)
-
-    # Se añadió un metodo update para manejar toda la lógica de actualización
-    def update(self, map_surface):
-        self.move()
-        self.fall()
-        if map_surface.check_for_collisions(self):
-            self.collision()
