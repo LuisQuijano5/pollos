@@ -94,7 +94,8 @@ class Map:
                     self.map_data.append(obstacle)
 
     def setChick(self, chick):
+        chick.update()
         chick.draw(self.screen, self.camera_x)
 
     def setSquare(self, sq):
-        sq.draw(self.screen)
+        sq.draw(self.screen, self.camera_x+100)

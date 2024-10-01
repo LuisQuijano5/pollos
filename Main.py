@@ -15,19 +15,30 @@ if __name__ == '__main__':
     camera_y = 0
     map_width = 2000
     map_height = 600
-    gravity = 5
+    gravity = 10
 
     #Objects creation
     map_surface = Map(screen, camera_x, camera_y, map_width, map_height, scroll_speed, square_size)
-    chick = Chick(400, 300, scroll_speed, square_size, (0, 0, 0),  map_height - square_size, square_size, gravity)
+
+    animations = []
+
+    for i in range (10):
+        img = pygame.image.load(f"models/images/{i}.png")
+        image= pygame.transform.scale(img, (200,100))
+        animations.append(image)
+    chick = Chick(200, 100, scroll_speed, 100, animations, 40, 520, gravity)
+    #chick2= Chick(200,100, scroll_speed, 100, "models/images/perry.png", 40, 520, gravity)
     map_surface.set_map_surface()
 
+    i = 0 #debugging
     #Game cycle
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                pygame.quit()
+                quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     chick.invert_gravity()
@@ -39,9 +50,10 @@ if __name__ == '__main__':
         if not vcol:
             chick.fall()
 
-        # Refreshing screen
+        #Refreshing screen
         map_surface.scroll()
         map_surface.setChick(chick)
-        pygame.display.flip()
-        clock.tick(60)
-pygame.quit()
+        #map_surface.setSquare(chick2)
+        pygame.display.update()
+        clock.tick(30)
+    pygame.quit()
