@@ -1,6 +1,7 @@
 import pygame
 
 from Models.Chick import Chick
+from Models.Platypus import Platypus
 from Models.Square import Square
 from View.Map import Map
 
@@ -20,6 +21,7 @@ if __name__ == '__main__':
     #Objects creation
     map_surface = Map(screen, camera_x, camera_y, map_width, map_height, scroll_speed, square_size)
     chick = Chick(400, 300, scroll_speed, square_size, (0, 0, 0),  map_height - square_size, square_size, gravity)
+    perry = Platypus(100, 300, scroll_speed, square_size, (0, 0, 0),  map_height - square_size, square_size, gravity)
     map_surface.set_map_surface()
 
     #Game cycle
@@ -28,9 +30,11 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     chick.invert_gravity()
+                if event.key == pygame.K_d:
+                    perry.invert_gravity()
 
         # Handling functionality
         vcol, hcol = map_surface.check_for_collisions(chick)
@@ -39,9 +43,17 @@ if __name__ == '__main__':
         if not vcol:
             chick.fall()
 
+        # Handling functionality
+        vcol, hcol = map_surface.check_for_collisions(perry)
+        if not hcol:
+            perry.move()
+        if not vcol:
+            perry.fall()
+
         # Refreshing screen
         map_surface.scroll()
-        map_surface.setChick(chick)
+        map_surface.setAnimal(chick)
+        map_surface.setAnimal(perry)
         pygame.display.flip()
         clock.tick(60)
 pygame.quit()

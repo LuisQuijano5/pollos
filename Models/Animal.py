@@ -8,7 +8,6 @@ class Animal:
         self.scroll_speed = speed
         self.size = size
         self.color = color
-        self.hitbox = pygame.Rect(x, y, size, size)
         # self.max_y = max_y
         # self.min_y = min_y
         self.gravity = gravity
