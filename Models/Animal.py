@@ -12,7 +12,7 @@ class Animal:
         self.frame_index = 0
         self.update_time= pygame.time.get_ticks()
         self.image = self.animations[ self.frame_index]
-        self.image= pygame.transform.scale(self.image, (200,100))
+        self.image= pygame.transform.scale(self.image, (40,30))
         self.hitbox = pygame.Rect(x, y, size, size)
         #self.max_y = max_y
         #self.min_y = min_y

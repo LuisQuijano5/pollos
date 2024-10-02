@@ -24,9 +24,9 @@ if __name__ == '__main__':
 
     for i in range (10):
         img = pygame.image.load(f"models/images/{i}.png")
-        image= pygame.transform.scale(img, (200,100))
+        image= pygame.transform.scale(img, (100,40))
         animations.append(image)
-    chick = Chick(200, 100, scroll_speed, 100, animations, 40, 520, gravity)
+    chick = Chick(100, 40, scroll_speed, 40, animations, 40, 40, gravity)
     #chick2= Chick(200,100, scroll_speed, 100, "models/images/perry.png", 40, 520, gravity)
     map_surface.set_map_surface()
 
