@@ -3,17 +3,18 @@ from numpy.ma.core import anomalies
 
 
 class Animal:
-    def __init__(self, x, y, speed, size, animations, max_y, min_y, gravity):
+    def __init__(self, x, y, speed, width, height, animations, max_y, min_y, gravity):
         self.x = x
         self.y = y
         self.animations =  animations
         self.scroll_speed = speed
-        self.size = size
+        self.width = width
+        self.height = height
         self.frame_index = 0
         self.update_time= pygame.time.get_ticks()
-        self.image = self.animations[ self.frame_index]
-        self.image= pygame.transform.scale(self.image, (40,30))
-        self.hitbox = pygame.Rect(x, y, size, size)
+        self.image = self.animations[self.frame_index]
+        self.image= pygame.transform.scale(self.image, (width,height))
+        self.hitbox = pygame.Rect(x, y, width, height)
         #self.max_y = max_y
         #self.min_y = min_y
         self.gravity = gravity
@@ -29,6 +30,7 @@ class Animal:
             self.update_time= pygame.time.get_ticks()
             if self.frame_index >= len(self.animations):
                 self.frame_index = 0
+
     def draw(self, surface, camera_x):
         draw_x = self.hitbox.x - camera_x
         surface.blit(self.image, (draw_x, self.hitbox.y))

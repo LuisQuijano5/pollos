@@ -1,7 +1,7 @@
 import pygame
 
 from Models.Chick import Chick
-from Models.Square import Square
+from Models.Platypus import Platypus
 from View.Map import Map
 
 if __name__ == '__main__':
@@ -21,13 +21,20 @@ if __name__ == '__main__':
     map_surface = Map(screen, camera_x, camera_y, map_width, map_height, scroll_speed, square_size)
 
     animations = []
+    animations2 = []
 
     for i in range (10):
         img = pygame.image.load(f"models/images/{i}.png")
-        image= pygame.transform.scale(img, (100,40))
+        image= pygame.transform.scale(img, (40,40))
         animations.append(image)
-    chick = Chick(100, 40, scroll_speed, 40, animations, 40, 40, gravity)
-    #chick2= Chick(200,100, scroll_speed, 100, "models/images/perry.png", 40, 520, gravity)
+    for c in range(10):
+        img = pygame.image.load(f"models/images/{c}p.png")
+        image = pygame.transform.scale(img, (80, 40))
+        animations2.append(image)
+    chick = Chick(200, 300, scroll_speed, square_size, square_size, animations, 40, 40, gravity)
+    perry = Platypus(100, 300, scroll_speed, square_size * 2, square_size, animations2,  40, 40, gravity)
+
+
     map_surface.set_map_surface()
 
     i = 0 #debugging
@@ -42,6 +49,8 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     chick.invert_gravity()
+                if event.key == pygame.K_d:
+                    perry.invert_gravity()
 
         # Handling functionality
         vcol, hcol = map_surface.check_for_collisions(chick)
@@ -50,10 +59,18 @@ if __name__ == '__main__':
         if not vcol:
             chick.fall()
 
+        vcol, hcol = map_surface.check_for_collisions(perry)
+        if not hcol:
+            perry.move()
+        if not vcol:
+            perry.fall()
+
+        if perry.eat(chick):
+            print("Eat chicken")
         #Refreshing screen
         map_surface.scroll()
-        map_surface.setChick(chick)
-        #map_surface.setSquare(chick2)
+        map_surface.setChicken(chick)
+        map_surface.setPerry(perry)
         pygame.display.update()
         clock.tick(30)
     pygame.quit()

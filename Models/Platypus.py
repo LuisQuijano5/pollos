@@ -1,6 +1,8 @@
 import pygame
 
-from Animal import Animal
-
+from Models.Animal import Animal
 class Platypus(Animal):
-    pass
+
+    def eat(self, chick):
+        if self.hitbox.colliderect(chick.hitbox):
+            return True

@@ -50,7 +50,6 @@ class Map:
                     # print(sq.hitbox.bottom, animal.hitbox.top) #debgginh
                     if (not animal.gravity_is_inverted and animal.hitbox.bottom == sq.hitbox.top) or \
                             (animal.gravity_is_inverted and animal.hitbox.top == sq.hitbox.bottom):
-
                         sq.change_color((255, 0, 0), self.map_surface)
                         animal.collision()
                         vertical_collision_detected = True
@@ -60,6 +59,7 @@ class Map:
                         sq.change_color((255, 0, 0), self.map_surface)
                         animal.collision()
                         horizontal_collision_detected = True
+
         return vertical_collision_detected, horizontal_collision_detected
 
     def scroll(self):
@@ -93,9 +93,13 @@ class Map:
                     obstacle.draw(self.map_surface)
                     self.map_data.append(obstacle)
 
-    def setChick(self, chick):
-        chick.update()
-        chick.draw(self.screen, self.camera_x)
+    def setChicken(self, animal):
+        animal.update()
+        animal.draw(self.screen, self.camera_x)
+
+    def setPerry(self, animal):
+        animal.update()
+        animal.draw(self.screen, self.camera_x)
 
     def setSquare(self, sq):
-        sq.draw(self.screen, self.camera_x+100)
+        sq.draw(self.screen)
