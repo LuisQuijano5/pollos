@@ -50,6 +50,9 @@ if __name__ == '__main__':
         if not vcol:
             perry.fall()
 
+        if perry.eat(chick):
+            print("Eat chicken")
+
         # Refreshing screen
         map_surface.scroll()
         map_surface.setAnimal(chick)
