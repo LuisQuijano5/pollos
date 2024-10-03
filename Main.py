@@ -27,9 +27,10 @@ if __name__ == '__main__':
         img = pygame.image.load(f"models/images/{i}.png")
         image= pygame.transform.scale(img, (40,40))
         animations.append(image)
-    for c in range(10):
+    for c in range(18):
         img = pygame.image.load(f"models/images/{c}p.png")
         image = pygame.transform.scale(img, (80, 40))
+        iamge = pygame.transform.flip(img, False, True)
         animations2.append(image)
     chick = Chick(200, 300, scroll_speed, square_size, square_size, animations, 40, 40, gravity)
     perry = Platypus(100, 300, scroll_speed, square_size * 2, square_size, animations2,  40, 40, gravity)
@@ -49,8 +50,17 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     chick.invert_gravity()
+                    if chick.gravity > 0:
+                        chick.flip = False
+                    else:
+                        chick.flip = True
+
                 if event.key == pygame.K_d:
                     perry.invert_gravity()
+                    if perry.gravity > 0:
+                        perry.flip = False
+                    else:
+                        perry.flip = True
 
         # Handling functionality
         vcol, hcol = map_surface.check_for_collisions(chick)

@@ -1,11 +1,13 @@
 import pygame
 from numpy.ma.core import anomalies
+from pygame.examples.cursors import image
 
 
 class Animal:
     def __init__(self, x, y, speed, width, height, animations, max_y, min_y, gravity):
         self.x = x
         self.y = y
+        self.flip = False
         self.animations =  animations
         self.scroll_speed = speed
         self.width = width
@@ -33,9 +35,11 @@ class Animal:
 
     def draw(self, surface, camera_x):
         draw_x = self.hitbox.x - camera_x
-        surface.blit(self.image, (draw_x, self.hitbox.y))
+        image_flip = pygame.transform.flip(self.image, False, self.flip)
+        surface.blit(image_flip, (draw_x, self.hitbox.y))
 
     def move(self):
+
         self.hitbox.x += self.scroll_speed
 
     def invert_gravity(self):
