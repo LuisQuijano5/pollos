@@ -1,5 +1,4 @@
 import pygame
-from numpy.ma.core import anomalies
 from pygame.examples.cursors import image
 
 
