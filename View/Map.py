@@ -93,7 +93,12 @@ class Map:
                     obstacle.draw(self.map_surface)
                     self.map_data.append(obstacle)
 
-    def setAnimal(self, animal):
+    def setChicken(self, animal):
+        animal.update()
+        animal.draw(self.screen, self.camera_x)
+
+    def setPerry(self, animal):
+        animal.update()
         animal.draw(self.screen, self.camera_x)
 
     def setSquare(self, sq):

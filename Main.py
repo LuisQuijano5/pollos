@@ -2,7 +2,6 @@ import pygame
 
 from Models.Chick import Chick
 from Models.Platypus import Platypus
-from Models.Square import Square
 from View.Map import Map
 
 if __name__ == '__main__':
@@ -16,25 +15,52 @@ if __name__ == '__main__':
     camera_y = 0
     map_width = 2000
     map_height = 600
-    gravity = 5
+    gravity = 10
 
     #Objects creation
     map_surface = Map(screen, camera_x, camera_y, map_width, map_height, scroll_speed, square_size)
-    chick = Chick(400, 300, scroll_speed, square_size, (0, 0, 0),  map_height - square_size, square_size, gravity)
-    perry = Platypus(100, 300, scroll_speed, square_size, (0, 0, 0),  map_height - square_size, square_size, gravity)
+
+    animations = []
+    animations2 = []
+
+    for i in range (10):
+        img = pygame.image.load(f"models/images/{i}.png")
+        image= pygame.transform.scale(img, (40,40))
+        animations.append(image)
+    for c in range(18):
+        img = pygame.image.load(f"models/images/{c}p.png")
+        image = pygame.transform.scale(img, (80, 40))
+        iamge = pygame.transform.flip(img, False, True)
+        animations2.append(image)
+    chick = Chick(200, 300, scroll_speed, square_size, square_size, animations, 40, 40, gravity)
+    perry = Platypus(100, 300, scroll_speed, square_size * 2, square_size, animations2,  40, 40, gravity)
+
+
     map_surface.set_map_surface()
 
+    i = 0 #debugging
     #Game cycle
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            elif event.type == pygame.KEYDOWN:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     chick.invert_gravity()
+                    if chick.gravity > 0:
+                        chick.flip = False
+                    else:
+                        chick.flip = True
+
                 if event.key == pygame.K_d:
                     perry.invert_gravity()
+                    if perry.gravity > 0:
+                        perry.flip = False
+                    else:
+                        perry.flip = True
 
         # Handling functionality
         vcol, hcol = map_surface.check_for_collisions(chick)
@@ -43,7 +69,6 @@ if __name__ == '__main__':
         if not vcol:
             chick.fall()
 
-        # Handling functionality
         vcol, hcol = map_surface.check_for_collisions(perry)
         if not hcol:
             perry.move()
@@ -52,11 +77,10 @@ if __name__ == '__main__':
 
         if perry.eat(chick):
             print("Eat chicken")
-
-        # Refreshing screen
+        #Refreshing screen
         map_surface.scroll()
-        map_surface.setAnimal(chick)
-        map_surface.setAnimal(perry)
-        pygame.display.flip()
-        clock.tick(60)
-pygame.quit()
+        map_surface.setChicken(chick)
+        map_surface.setPerry(perry)
+        pygame.display.update()
+        clock.tick(30)
+    pygame.quit()
