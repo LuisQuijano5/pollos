@@ -29,6 +29,7 @@ def game_over(screen, message):
                 return True
             if event.type == pygame.KEYDOWN:
                 waiting = False
+                pygame.mixer.music.play(-1)
     return False
 
 
