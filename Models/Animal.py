@@ -25,7 +25,7 @@ class Animal:
 
     def update(self):
         cooldown_animation= 100
-        self.image= self.animations[self.frame_index]
+        self.image = self.animations[self.frame_index]
         if pygame.time.get_ticks() - self.update_time >= cooldown_animation:
             self.frame_index += 1
             self.update_time= pygame.time.get_ticks()
@@ -38,7 +38,6 @@ class Animal:
         surface.blit(image_flip, (draw_x, self.hitbox.y))
 
     def move(self):
-
         self.hitbox.x += self.scroll_speed
 
     def invert_gravity(self):
@@ -46,25 +45,10 @@ class Animal:
             self.gravity_is_inverted = not self.gravity_is_inverted
             self.can_invert = False
             self.gravity = -1 * self.gravity
-        # if not self.is_falling:
-        #     self.is_falling = True
-        #     self.can_invert = False
-        #     self.gravity = -1 * self.gravity
-        #     threading.Thread(target=self._fall_thread).start()
 
     def collision(self):
         self.can_invert = True
 
-    def fall(self):
+    def fall(self, map_height):
         self.hitbox.y += self.gravity
-        # while self.is_falling:
-        #     self.hitbox.y += self.gravity
-        #     if self.hitbox.y <= self.max_y:
-        #         self.hitbox.y = self.max_y
-        #         self.is_falling = False
-        #         break
-        #     elif self.hitbox.y >= self.min_y:
-        #         self.hitbox.y = self.min_y
-        #         self.is_falling = False
-        #         break
-        #     pygame.time.delay(20)
+        return self.hitbox.y > map_height + self.height or self.hitbox.y < -1 * self.height

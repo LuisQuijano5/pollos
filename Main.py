@@ -4,6 +4,7 @@ from Models.Chick import Chick
 from Models.Platypus import Platypus
 from View.Map import Map
 
+
 def game_over(screen, message):
     pygame.mixer.music.stop()
 
@@ -42,14 +43,17 @@ def show_start_message(screen):
     screen.blit(text, text_rect)
     pygame.display.flip()
 
+
 def game_cycle(screen):
     # Objects creation
     map_surface = Map(screen, camera_x, camera_y, map_width, map_height, scroll_speed, square_size)
     chick = Chick(init_chick_pos, init_y_pos, scroll_speed, square_size, square_size, animations, square_size,
                   square_size, gravity)
+    chick_fell = False
     perry = Platypus(init_perry_pos, init_y_pos, scroll_speed, square_size * 2, square_size, animations2, square_size,
                      square_size, gravity)
     map_surface.set_map_surface()
+    perry_fell = False
 
     # Game cycle
     run = True
@@ -59,7 +63,8 @@ def game_cycle(screen):
 
     while run:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: return False
+            if event.type == pygame.QUIT:
+                return False
             elif event.type == pygame.KEYDOWN:
                 if show_start:
                     if event.key == pygame.K_k:
@@ -86,20 +91,20 @@ def game_cycle(screen):
             if not hcol:
                 chick.move()
             if not vcol:
-                chick.fall()
+                chick_fell = chick.fall(map_height)
 
             vcol, hcol = map_surface.check_for_collisions(perry)
             if not hcol:
                 perry.move()
             if not vcol:
-                perry.fall()
+                perry_fell = perry.fall(map_height)
 
-            if chick.hitbox.right - map_surface.camera_x < 0 or perry.eat(chick):
+            if chick.hitbox.right - map_surface.camera_x < 0 or perry.eat(chick) or chick_fell:
                 game_active = False
                 game_over_state = game_over(screen, 'GAME OVER')
                 break
 
-            if perry.hitbox.right - map_surface.camera_x < 0:
+            if perry.hitbox.right - map_surface.camera_x < 0 or perry_fell:
                 game_active = False
                 game_over_state = game_over(screen, 'YOU WIN')
                 break
@@ -118,15 +123,14 @@ def game_cycle(screen):
     return True
 
 
-
 if __name__ == '__main__':
-    #param definition
+    # param definition
     pygame.init()
     pygame.mixer.init()
     screen = pygame.display.set_mode((1000, 600))
     clock = pygame.time.Clock()
-    square_size = 60
-    scroll_speed = 4
+    square_size = 50
+    scroll_speed = 5
     camera_x = 0
     camera_y = 0
     map_width = 2000
@@ -142,9 +146,9 @@ if __name__ == '__main__':
     animations = []
     animations2 = []
 
-    for i in range (10):
+    for i in range(10):
         img = pygame.image.load(f"models/images/{i}.png")
-        image= pygame.transform.scale(img, (square_size, square_size))
+        image = pygame.transform.scale(img, (square_size, square_size))
         animations.append(image)
     for c in range(18):
         img = pygame.image.load(f"models/images/{c}p.png")
