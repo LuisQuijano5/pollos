@@ -36,7 +36,7 @@ class Map:
             floor_square = Square(x, self.map_height - self.size, self.size, (139, 69, 19))
             ceiling_square = Square(x, 0, self.size, (255, 255, 255))
             floor_square.draw(self.map_surface)
-            ceiling_square.draw(self.map_surface)
+            ceiling_square.draw2(self.map_surface)
             self.map_data.append(floor_square)
             self.map_data.append(ceiling_square)
 
@@ -155,3 +155,5 @@ class Map:
 
     def setSquare(self, sq):
         sq.draw(self.screen)
+
+
