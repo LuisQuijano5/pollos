@@ -12,8 +12,8 @@ class Column:
 
     def draw(self, map_surface, map_data):
         for i in range(self.height):
-            if self.x - (i * self.size) <= self.size:
-                break
+            if self.y - (i * self.size) == 0:
+                continue
             obstacle = Square(self.x, self.y - (i * self.size), self.size, (0, 255, 0))
             obstacle.draw(map_surface)
             map_data.append(obstacle)

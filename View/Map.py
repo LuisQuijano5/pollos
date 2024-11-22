@@ -46,22 +46,33 @@ class Map:
             self.generate_base_blocks(x, 1)
             return
 
-        # No complete floor or ceiling
-        self.generate_base_blocks(x, .50)
+        main_random = random.random()
+        obstacle_height = random.randint(1, self.map_height // self.size - 2) * self.size
+        y = self.map_height - self.size - obstacle_height
 
-        if random.random() < 0.2:  # 30% de probabilidad
-            obstacle_height = random.randint(1, self.map_height // self.size - 2) * self.size
-            y = self.map_height - self.size - obstacle_height
-            ran_val = random.randint(1, 6)
-            # obstacle = Square(x, self.map_height - self.size - obstacle_height, self.size, (0, 255, 0))
-            # obstacle.draw(self.map_surface)
-            # self.map_data.append(obstacle)
-            # platform = Platform(self.map_height, self.size, x, y, ran_val)
-            # platform.draw(self.map_surface, self.map_data)
-            # column = Column(self.map_height, self.size, x, y, ran_val)
-            # column.draw(self.map_surface, self.map_data)
-            # bug = Bug_rep(self.map_height, self.size, x, y)
-            # bug.draw(self.map_surface, self.map_data)
+        if main_random >= .95:  # all, no floor
+            self.generate_base_blocks(x, 0)
+            column = Column(self.map_height, self.size, x, y, random.randint(1, 6))
+            column.draw(self.map_surface, self.map_data)
+            platform = Platform(self.map_height, self.size, x, y, random.randint(1, 2))
+            platform.draw(self.map_surface, self.map_data)
+        elif main_random >= .8:  # some floor
+            if main_random >= .85:  # add platforms
+                platform = Platform(self.map_height, self.size, x, y, random.randint(1, 2))
+                platform.draw(self.map_surface, self.map_data)
+            self.generate_base_blocks(x, random.random())
+        elif main_random >= .75:  # no floor and platforms
+            self.generate_base_blocks(x, 0)
+            platform = Platform(self.map_height, self.size, x, y, random.randint(1, 2))
+            platform.draw(self.map_surface, self.map_data)
+        elif main_random >= .55:  # columns
+            if main_random >= .65:  # platforms
+                platform = Platform(self.map_height, self.size, x, y, random.randint(1, 2))
+                platform.draw(self.map_surface, self.map_data)
+            column = Column(self.map_height, self.size, x, y, random.randint(1, 6))
+            column.draw(self.map_surface, self.map_data)
+        else:
+            self.generate_base_blocks(x, 1)
 
     def set_map_surface(self):
         for x in range(0, self.map_width * 2, self.size):
@@ -90,11 +101,9 @@ class Map:
                 if sq.hitbox.right > animal.hitbox.right > sq.hitbox.left and \
                         ((not animal.gravity_is_inverted and sq.hitbox.bottom > animal.hitbox.bottom > sq.hitbox.top) or
                          (animal.gravity_is_inverted and sq.hitbox.top < animal.hitbox.top < sq.hitbox.bottom)):
-                    animal.hitbox.y -= animal.gravity
-                    if animal.__class__ == Platypus:
-                        self.setPerry(animal)
-                    else:
-                        self.setChicken(animal)
+                    # animal.hitbox.y -= animal.gravity
+                    animal.hitbox.x -= animal.scroll_speed
+                    self.setAnimal(animal)
 
                 if vertical_collision_detected and horizontal_collision_detected and animal.__class__ != Platypus:
                     break
@@ -131,6 +140,7 @@ class Map:
 
         # Verificar si necesitamos extender el mapa
         if self.camera_x + self.screen.get_width() >= self.map_surface.get_width() - self.map_width:
+            print(self.camera_x + self.screen.get_width(), self.map_surface.get_width() - self.map_width)
             # Extender la superficie del mapa agregando más terreno yo soy dek terror ek masnletal
             new_width = self.map_surface.get_width() + self.map_width
             new_surface = pygame.Surface((new_width, self.map_height), pygame.SRCALPHA)
@@ -145,15 +155,9 @@ class Map:
             for x in range(start_x, new_width, self.size):
                 self.generate_blocks(x)
 
-    def setChicken(self, animal):
-        animal.update()
-        animal.draw(self.screen, self.camera_x)
-
-    def setPerry(self, animal):
+    def setAnimal(self, animal):
         animal.update()
         animal.draw(self.screen, self.camera_x)
 
     def setSquare(self, sq):
         sq.draw(self.screen)
-
-

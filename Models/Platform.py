@@ -11,6 +11,7 @@ class Platform:
 
     def draw(self, map_surface, map_data):
         for i in range(self.width):
+            print(self.x)
             obstacle = Square(self.x + (i * self.size), self.y, self.size, (0, 255, 0))
             obstacle.draw(map_surface)
             map_data.append(obstacle)

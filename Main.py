@@ -114,8 +114,8 @@ def game_cycle(screen):
 
         if game_active:
             map_surface.scroll()
-            map_surface.setChicken(chick)
-            map_surface.setPerry(perry)
+            map_surface.setAnimal(chick)
+            map_surface.setAnimal(perry)
 
         pygame.display.flip()
         clock.tick(60)
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     scroll_speed = 5
     camera_x = 0
     camera_y = 0
-    map_width = 2000
+    map_width = 200
     map_height = 600
     init_chick_pos = 500
     init_perry_pos = 300
