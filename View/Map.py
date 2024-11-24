@@ -40,7 +40,7 @@ class Map:
             self.map_data.append(floor_square)
             self.map_data.append(ceiling_square)
 
-    def generate_blocks(self, x):
+    def generate_blocks(self, x, max):
         x = (x // self.size) * self.size
         if len(self.map_data) < 50:
             self.generate_base_blocks(x, 1)
@@ -50,25 +50,25 @@ class Map:
         obstacle_height = random.randint(1, self.map_height // self.size - 2) * self.size
         y = self.map_height - self.size - obstacle_height
 
-        if main_random >= .95:  # all, no floor
+        if main_random >= .99:  # all, no floor
             self.generate_base_blocks(x, 0)
             column = Column(self.map_height, self.size, x, y, random.randint(1, 6))
             column.draw(self.map_surface, self.map_data)
-            platform = Platform(self.map_height, self.size, x, y, random.randint(1, 2))
-            platform.draw(self.map_surface, self.map_data)
-        elif main_random >= .8:  # some floor
+            platform = Platform(self.map_height, self.size, x, y, random.randint(1, 10))
+            platform.draw(self.map_surface, self.map_data, max)
+        elif main_random >= .98:  # some floor
             if main_random >= .85:  # add platforms
-                platform = Platform(self.map_height, self.size, x, y, random.randint(1, 2))
-                platform.draw(self.map_surface, self.map_data)
+                platform = Platform(self.map_height, self.size, x, y, random.randint(1, 10))
+                platform.draw(self.map_surface, self.map_data, max)
             self.generate_base_blocks(x, random.random())
-        elif main_random >= .75:  # no floor and platforms
+        elif main_random >= .5:  # no floor and platforms
             self.generate_base_blocks(x, 0)
-            platform = Platform(self.map_height, self.size, x, y, random.randint(1, 2))
-            platform.draw(self.map_surface, self.map_data)
+            platform = Platform(self.map_height, self.size, x, y, random.randint(1, 10))
+            platform.draw(self.map_surface, self.map_data, max)
         elif main_random >= .55:  # columns
             if main_random >= .65:  # platforms
-                platform = Platform(self.map_height, self.size, x, y, random.randint(1, 2))
-                platform.draw(self.map_surface, self.map_data)
+                platform = Platform(self.map_height, self.size, x, y, random.randint(1, 10))
+                platform.draw(self.map_surface, self.map_data, max)
             column = Column(self.map_height, self.size, x, y, random.randint(1, 6))
             column.draw(self.map_surface, self.map_data)
         else:
@@ -76,7 +76,7 @@ class Map:
 
     def set_map_surface(self):
         for x in range(0, self.map_width * 2, self.size):
-            self.generate_blocks(x)
+            self.generate_blocks(x, self.map_width * 2)
 
     def draw_background(self):
         # Dibujar cada capa de nubes con parallax
@@ -140,7 +140,6 @@ class Map:
 
         # Verificar si necesitamos extender el mapa
         if self.camera_x + self.screen.get_width() >= self.map_surface.get_width() - self.map_width:
-            print(self.camera_x + self.screen.get_width(), self.map_surface.get_width() - self.map_width)
             # Extender la superficie del mapa agregando más terreno yo soy dek terror ek masnletal
             new_width = self.map_surface.get_width() + self.map_width
             new_surface = pygame.Surface((new_width, self.map_height), pygame.SRCALPHA)
@@ -153,7 +152,7 @@ class Map:
 
             # Generar nuevos bloques para el terreno extendido
             for x in range(start_x, new_width, self.size):
-                self.generate_blocks(x)
+                self.generate_blocks(x, new_width)
 
     def setAnimal(self, animal):
         animal.update()

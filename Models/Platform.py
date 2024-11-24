@@ -9,9 +9,11 @@ class Platform:
         self.y = y
         self.x = x
 
-    def draw(self, map_surface, map_data):
+    def draw(self, map_surface, map_data, max):
         for i in range(self.width):
-            print(self.x)
-            obstacle = Square(self.x + (i * self.size), self.y, self.size, (0, 255, 0))
+            self.x += self.size
+            if self.x >= max:
+                break
+            obstacle = Square(self.x , self.y, self.size, (0, 255, 0))
             obstacle.draw(map_surface)
             map_data.append(obstacle)
