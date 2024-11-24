@@ -40,43 +40,43 @@ class Map:
             self.map_data.append(floor_square)
             self.map_data.append(ceiling_square)
 
-    def generate_blocks(self, x, max):
+    def getHeight(self):
+        obstacle_height = random.randint(1, self.map_height // self.size - 2) * self.size
+        return self.map_height - self.size - obstacle_height
+
+    def generate_blocks(self, x, max, main_random):
         x = (x // self.size) * self.size
         if len(self.map_data) < 50:
             self.generate_base_blocks(x, 1)
             return
 
-        main_random = random.random()
-        obstacle_height = random.randint(1, self.map_height // self.size - 2) * self.size
-        y = self.map_height - self.size - obstacle_height
-
-        if main_random >= .99:  # all, no floor
+        if main_random >= .95:  # all, no floor
             self.generate_base_blocks(x, 0)
-            column = Column(self.map_height, self.size, x, y, random.randint(1, 6))
+            column = Column(self.map_height, self.size, x, self.getHeight(), random.randint(1, 6))
             column.draw(self.map_surface, self.map_data)
-            platform = Platform(self.map_height, self.size, x, y, random.randint(1, 10))
+            platform = Platform(self.map_height, self.size, x, self.getHeight(), random.randint(1, 10))
             platform.draw(self.map_surface, self.map_data, max)
-        elif main_random >= .98:  # some floor
+        elif main_random >= .80:  # some floor
             if main_random >= .85:  # add platforms
-                platform = Platform(self.map_height, self.size, x, y, random.randint(1, 10))
+                platform = Platform(self.map_height, self.size, x, self.getHeight(), random.randint(1, 10))
                 platform.draw(self.map_surface, self.map_data, max)
             self.generate_base_blocks(x, random.random())
-        elif main_random >= .5:  # no floor and platforms
+        elif main_random >= .60:  # no floor and platforms
             self.generate_base_blocks(x, 0)
-            platform = Platform(self.map_height, self.size, x, y, random.randint(1, 10))
+            platform = Platform(self.map_height, self.size, x, self.getHeight(), random.randint(1, 10))
             platform.draw(self.map_surface, self.map_data, max)
-        elif main_random >= .55:  # columns
-            if main_random >= .65:  # platforms
-                platform = Platform(self.map_height, self.size, x, y, random.randint(1, 10))
+        elif main_random >= .4:  # columns
+            if main_random >= .5:  # platforms
+                platform = Platform(self.map_height, self.size, x, self.getHeight(), random.randint(1, 10))
                 platform.draw(self.map_surface, self.map_data, max)
-            column = Column(self.map_height, self.size, x, y, random.randint(1, 6))
+            column = Column(self.map_height, self.size, x, self.getHeight(), random.randint(1, 6))
             column.draw(self.map_surface, self.map_data)
         else:
             self.generate_base_blocks(x, 1)
 
     def set_map_surface(self):
         for x in range(0, self.map_width * 2, self.size):
-            self.generate_blocks(x, self.map_width * 2)
+            self.generate_blocks(x, self.map_width * 2, 0)
 
     def draw_background(self):
         # Dibujar cada capa de nubes con parallax
@@ -118,7 +118,7 @@ class Map:
                          (animal.gravity_is_inverted and animal.hitbox.top == sq.hitbox.bottom)):
                     animal.collision()
                     vertical_collision_detected = True
-                    sq.change_color((255, 0, 0), self.map_surface)
+                    #sq.change_color((255, 0, 0), self.map_surface)
                     continue
 
                 if horizontal_collision_detected:
@@ -128,7 +128,7 @@ class Map:
                         and animal.hitbox.right == sq.hitbox.left:
                     animal.collision()
                     horizontal_collision_detected = True
-                    sq.change_color((255, 0, 0), self.map_surface)
+                    #sq.change_color((255, 0, 0), self.map_surface)
 
         return vertical_collision_detected, horizontal_collision_detected
 
@@ -150,9 +150,10 @@ class Map:
             # Calcular la posición inicial correcta para los nuevos bloques
             start_x = (new_width - self.map_width) // self.size * self.size
 
+            main_random = random.random()
             # Generar nuevos bloques para el terreno extendido
             for x in range(start_x, new_width, self.size):
-                self.generate_blocks(x, new_width)
+                self.generate_blocks(x, new_width, main_random)
 
     def setAnimal(self, animal):
         animal.update()
